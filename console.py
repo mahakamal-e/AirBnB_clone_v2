@@ -112,13 +112,14 @@ class HBNBCommand(cmd.Cmd):
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        obj = eval(class_name)()
+        instance_of_class = HBNBCommand.classes[class_name]()
         args_list.remove(class_name)
 
-        for arg in args_list:
-            arg = arg.split('=')
-            key = arg[0]
-            value = arg[1]
+        for argument in args_list:
+            argument = argument.split('=')
+            key = argument[0]
+            value = argument[1]
+
             if value.startswith('"') or value.startswith("'"):
                 value = value.strip('"').strip("'")
                 value = value.replace('"', '\"').replace("'", "\'")\
@@ -127,10 +128,11 @@ class HBNBCommand(cmd.Cmd):
                 value = float(value)
             else:
                 value = int(value)
-            setattr(obj, key, value)
 
-        obj.save()
-        print(obj.id)
+            setattr(instance_of_class, key, value)
+
+        instance_of_class.save()
+        print(instance_of_class.id)
 
     def help_create(self):
         """ Help information for the create method """
