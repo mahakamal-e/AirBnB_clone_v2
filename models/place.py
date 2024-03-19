@@ -31,10 +31,9 @@ class Place(BaseModel, Base):
     else:
         @property
         def reviews(self):
-            from models import storage
             reviews_list = []
 
-            for review in storage.all(Review).values():
+            for review in models.storage.all(Review).values():
                 if review.place_id == self.id:
                     reviews_list.append(review)
 
