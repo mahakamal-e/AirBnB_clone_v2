@@ -6,7 +6,6 @@ import os
 from models.review import Review
 import models
 from sqlalchemy.orm import relationship
-from models import storage
 
 
 class Place(BaseModel, Base):
@@ -32,6 +31,7 @@ class Place(BaseModel, Base):
     else:
         @property
         def reviews(self):
+            from models import storage
             reviews_list = []
 
             for review in storage.all(Review).values():
