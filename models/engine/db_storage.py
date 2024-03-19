@@ -1,17 +1,15 @@
 #!/usr/bin/python3
 """ Defines module DBStorage """
-import os
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-
-from models.base_model import Base
 from models.city import City
 from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
 from models.amenity import Amenity
+import os
+from models.base_model import Base
 
 
 class DBStorage:
@@ -39,20 +37,23 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """query on the current database session"""
-        objs = []
-        dct = {}
+        """
+        write query on the current database session
+        to get all objects depending of the class
+        """
+        objs_list = []
+        result_dict = {}
         if cls is None:
             for item in self.classes:
-                objs.extend(self.__session.query(item).all())
+                objs_list.extend(self.__session.query(item).all())
         else:
-            if type(cls) is str:
+            if isinstance(cls, str):
                 cls = eval(cls)
-            objs = self.__session.query(cls).all()
-
-        for obj in objs:
-            dct[obj.__class__.__name__ + '.' + obj.id] = obj
-        return dct
+            objs_list = self.__session.query(cls).all()
+        for obj in objs_list:
+            key = f"{obj.__class__.__name__}.{obj.id}"
+            result_dict[key] = obj
+        return result_dict
 
     def new(self, obj):
         """ Method to add the object to the current database session"""
