@@ -8,12 +8,13 @@ import models
 from sqlalchemy.orm import relationship
 
 
-place_amenity = Table('place_amenity', Base.metadata,
-                      Column('place_id', String(60), ForeignKey('places.id'),
-                             primary_key=True, nullable=False),
-                      Column('amenity_id', String(60), ForeignKey('amenities.id'),
-                             primary_key=True, nullable=False)
-                     )
+place_amenity = Table(
+        'place_amenity', Base.metadata,
+        Column('place_id', String(60), ForeignKey('places.id'),
+               primary_key=True, nullable=False),
+        Column('amenity_id', String(60), ForeignKey('amenities.id'),
+               primary_key=True, nullable=False)
+        )
 
 
 class Place(BaseModel, Base):
@@ -50,7 +51,7 @@ class Place(BaseModel, Base):
                     reviews_list.append(review)
 
             return reviews_list
-        
+
         @property
         def amenities(self):
             """Get list of Amenities """

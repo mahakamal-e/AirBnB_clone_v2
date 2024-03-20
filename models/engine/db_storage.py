@@ -28,7 +28,7 @@ class DBStorage:
             os.getenv('HBNB_MYSQL_HOST'),
             os.getenv('HBNB_MYSQL_DB')
     )
-                                               
+
     def __init__(self):
         """ initalization instance from class DBStorage """
         self.__engine = create_engine(self.__db_connection,
