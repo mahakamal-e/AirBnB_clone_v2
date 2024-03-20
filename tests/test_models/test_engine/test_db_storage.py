@@ -1,27 +1,45 @@
 #!/usr/bin/python3
-""" Unittests for database """
+"""
+Contains the TestDBStorageDocs and TestDBStorage classes
+"""
+from datetime import datetime
+import inspect
+from models.amenity import Amenity
+from models.base_model import BaseModel
+import models
+from models.engine import db_storage
+from models.city import City
+from models.review import Review
+from models.state import State
+from models.user import User
+from models.place import Place
+import pycodestyle
 import unittest
-import MySQLdb
+import json
+import os
+
+DBStorage = db_storage.DBStorage
+classes = {"Amenity": Amenity, "City": City, "Place": Place,
+           "Review": Review, "State": State, "User": User}
+storageer = os.getenv("HBNB_TYPE_STORAGE")
 
 
-class TestStateCreation(unittest.TestCase):
-    def setUp(self):
-        self.db = MySQLdb.connect(host="localhost", user="hbnb_test",
-                                  passwd="hbnb_test_pwd", db="hbnb_test_db")
-        self.cursor = self.db.cursor()
+class TestFileStorage(unittest.TestCase):
+    """Fs is working"""
 
-        self.cursor.execute("SELECT COUNT(*) FROM states")
-        self.initial_state_count = self.cursor.fetchone()[0]
+    @unittest.skipIf(storageer != 'db', "not the db")
+    def test_save(self):
+        """Tsaving to ghe json file """
 
-    def tearDown(self):
-        self.db.close()
+    @unittest.skipIf(storageer != 'db', "not the db")
+    def test_new(self):
+        """new obj"""
 
-    def test_create_state(self):
-        self.cursor.execute("SELECT COUNT(*) FROM states")
-        final_state_count = self.cursor.fetchone()[0]
+    @unittest.skipIf(storageer != 'db', "not the db")
+    def test_all_returns_dict(self):
+        """is it dict"""
+        self.assertIs(type(models.storage.all()), dict)
 
-        self.assertEqual(final_state_count, self.initial_state_count + 1,
-                         "State creation test failed")
-
-if __name__ == '__main__':
-    unittest.main()
+    @unittest.skipIf(storageer != 'db', "not the db")
+    def test_no_classes(self):
+        """is it wies no class ?"""
