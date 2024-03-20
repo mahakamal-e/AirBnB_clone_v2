@@ -1,11 +1,19 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 import os
 from models.review import Review
 import models
 from sqlalchemy.orm import relationship
+
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60), ForeignKey('places.id'),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60), ForeignKey('amenities.id'),
+                             primary_key=True, nullable=False)
+                     )
 
 
 class Place(BaseModel, Base):
@@ -28,9 +36,12 @@ class Place(BaseModel, Base):
 
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship('Review', cascade='all, delete')
+        amenities = relationship("Amenity", secondary=place_amenity,
+                                 viewonly=False)
     else:
         @property
         def reviews(self):
+            """ Get list of reviews related to place """
             reviews_list = []
 
             for review in models.storage.all(Review).values():
@@ -38,3 +49,20 @@ class Place(BaseModel, Base):
                     reviews_list.append(review)
 
             return reviews_list
+        
+        @property
+        def amenities(self):
+            """Get list of Amenities """
+            amenity_list = []
+
+            for amenity in list(models.storage.all(Amenity).values()):
+                if amenity.id in self.amenity_ids:
+                    amenity_list.append(amenity)
+
+            return amenity_list
+
+        @amenities.setter
+        def amenities(self, obj):
+            """setter values of attribute Amenities"""
+            if isinstance(obj, Amenity):
+                self.amenity_ids.append(obj.id)
