@@ -1,45 +1,55 @@
 #!/usr/bin/python3
-"""
-Contains the TestDBStorageDocs and TestDBStorage classes
-"""
-from datetime import datetime
-import inspect
-from models.amenity import Amenity
-from models.base_model import BaseModel
-import models
-from models.engine import db_storage
-from models.city import City
-from models.review import Review
-from models.state import State
-from models.user import User
-from models.place import Place
-import pycodestyle
+"""test DBStorage module"""
 import unittest
-import json
+import pep8
 import os
-
-DBStorage = db_storage.DBStorage
-classes = {"Amenity": Amenity, "City": City, "Place": Place,
-           "Review": Review, "State": State, "User": User}
-storageer = os.getenv("HBNB_TYPE_STORAGE")
+from models.base_model import BaseModel
+from models.engine.db_storage import DBStorage
 
 
-class TestFileStorage(unittest.TestCase):
-    """Fs is working"""
+@unittest.skipIf(
+    os.getenv("HBNB_TYPE_STORAGE") == "db",
+    "this work only in db storage mode"
+)
+class test_DBStorage(unittest.TestCase):
+    """test DBStorage class"""
 
-    @unittest.skipIf(storageer != 'db', "not the db")
-    def test_save(self):
-        """Tsaving to ghe json file """
+    def setUp(self):
+        """set up DBStorage instance"""
+        self.storage = DBStorage()
 
-    @unittest.skipIf(storageer != 'db', "not the db")
+    def tearDown(self):
+        """remove storage instance"""
+        del self.storage
+
+    def test_pep8_DBStorage(self):
+        """test pep8 style"""
+        style = pep8.StyleGuide(quiet=True)
+        result = style.check_files(['models/engine/db_storage.py'])
+        self.assertEqual(result.total_errors, 0, "fix pep8")
+
+    def test_all(self):
+        """test all method"""
+        storage = DBStorage()
+        storage.reload()
+        obj = storage.all()
+        self.assertEqual(type(obj), dict)
+
     def test_new(self):
-        """new obj"""
+        """test new method"""
+        storage = DBStorage()
+        storage.reload()
+        obj = storage.all()
+        obj = obj.copy()
+        new = BaseModel()
+        storage.new(new)
+        storage.save()
+        key = new.__class__.__name__ + "." + str(new.id)
+        self.assertIsNotNone(obj[key])
 
-    @unittest.skipIf(storageer != 'db', "not the db")
-    def test_all_returns_dict(self):
-        """is it dict"""
-        self.assertIs(type(models.storage.all()), dict)
-
-    @unittest.skipIf(storageer != 'db', "not the db")
-    def test_no_classes(self):
-        """is it wies no class ?"""
+    def test_reload(self):
+        """test reload method"""
+        storage = DBStorage()
+        storage.reload()
+        obj = storage.all()
+        self.assertEqual(type(obj), dict)
