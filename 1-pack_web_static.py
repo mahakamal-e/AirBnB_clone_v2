@@ -5,6 +5,7 @@
 from fabric.api import local
 from datetime import datetime
 
+
 def do_pack():
     """This function is responsible for generating the .tgz archive."""
     get_current_date = datetime.now().strftime("%Y%m%d%H%M%S")
