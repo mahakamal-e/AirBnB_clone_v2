@@ -13,6 +13,7 @@ def do_pack():
         local("mkdir -p {}".format(archive_file))
         archive_name = "{}/web_static_{}.tgz".format(archive_file,
                                                      get_current_date)
+        local("tar -czvf {} web_static".format(archive_name))
         return archive_name
     except Exception as e:
         return None
