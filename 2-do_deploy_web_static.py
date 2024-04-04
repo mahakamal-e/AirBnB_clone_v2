@@ -28,3 +28,11 @@ def do_deploy(archive_path):
     except Exception as e:
         print(e)
         return False
+
+def cleanup():
+    # Remove temporary files
+    if os.path.exists("/tmp/temp_file.txt"):
+        os.remove("/tmp/temp_file.txt")
+
+if __name__ == "__main__":
+    deploy()
