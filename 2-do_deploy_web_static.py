@@ -23,7 +23,6 @@ def do_deploy(archive_path):
         run("sudo rm /tmp/{}".format(filename))
         run("sudo rm -rf /data/web_static/current")
         run("sudo ln -sf {} /data/web_static/current".format(release_dir))
-
         return True
     except Exception as e:
         print(e)
