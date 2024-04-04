@@ -36,7 +36,8 @@ def do_deploy(archive_path):
             .format(filename, f_without_ext))
         run("rm /tmp/{}".format(filename))
         run("mv /data/web_static/releases/{}/web_static/*\
-            /data/web_static/releases/{}/".format(f_without_ext, f_without_ext))
+            /data/web_static/releases/{}/".format(f_without_ext,
+                                                  f_without_ext))
         run("rm -rf /data/web_static/releases/{}/web_static"
             .format(no_extension))
         run("rm -rf /data/web_static/current")
