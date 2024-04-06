@@ -14,7 +14,8 @@ def do_clean(number=0):
     if number == '0':
         number = 2
     else:
-        int(number) + 1
+        number = int(number) + 1
+
 
     local('cd versions; ls -t | tail -n +{} | xargs rm -rf'
           .format(number))
