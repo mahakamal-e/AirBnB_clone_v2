@@ -25,10 +25,12 @@ def do_deploy(archive_path):
         run('sudo tar -xzf /tmp/{}.tgz -C {}'.format(file_name,
                                                      deployment_dir))
         run('sudo rm -f /tmp/{}.tgz'.format(file_name))
-        run('sudo mv {}/web_static/* {}/'.format(deployment_dir, deployment_dir))
+        run('sudo mv {}/web_static/* {}/'.format(deployment_dir,
+                                                 deployment_dir))
         run('sudo rm -rf {}/web_static'.format(deployment_dir))
         run('sudo rm -rf /data/web_static/current')
         run('sudo ln -s {} /data/web_static/current'.format(deployment_dir))
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
