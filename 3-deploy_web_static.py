@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 """A Fabric script distributes an archive to your web servers."""
 from fabric.api import *
+from fabric.contrib import files
 import os
+from os.path import exists
 from datetime import datetime
 
 env.user = 'ubuntu'
@@ -23,29 +25,28 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    """Function that used to deploy to web servers"""
+    """Function for deploy"""
     if not os.path.exists(archive_path):
         return False
 
-    base_path = '/data/web_static/releases/'
+    data_path = '/data/web_static/releases/'
     tmp = archive_path.split('.')[0]
-    file_name = tmp.split('/')[1]
-    deployment_dir = base_path + file_name
+    name = tmp.split('/')[1]
+    dest = data_path + name
 
     try:
         put(archive_path, '/tmp')
-        run('sudo mkdir -p {}'.format(deployment_dir))
-        run('sudo tar -xzf /tmp/{}.tgz -C {}'.format(file_name,
-                                                     deployment_dir))
-        run('sudo rm -f /tmp/{}.tgz'.format(file_name))
-        run('sudo mv {}/web_static/* {}/'.format(deployment_dir,
-                                                 deployment_dir))
-        run('sudo rm -rf {}/web_static'.format(deployment_dir))
+        run('sudo mkdir -p {}'.format(dest))
+        run('sudo tar -xzf /tmp/{}.tgz -C {}'.format(name, dest))
+        run('sudo rm -f /tmp/{}.tgz'.format(name))
+        run('sudo mv {}/web_static/* {}/'.format(dest, dest))
+        run('sudo rm -rf {}/web_static'.format(dest))
         run('sudo rm -rf /data/web_static/current')
-        run('sudo ln -s {} /data/web_static/current'.format(deployment_dir))
+        run('sudo ln -s {} /data/web_static/current'.format(dest))
         return True
-    except:
+    except SpecificException as e:
         return False
+
 
 def deploy():
     """ creates & distributes archive to web servers."""
