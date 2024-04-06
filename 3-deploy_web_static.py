@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """A Fabric script distributes an archive to your web servers."""
 from fabric.contrib import files
-from fabric.api import env, put, run, local
+from fabric.api import *
 from os.path import exists
-import time
+from datetime import datetime
 import os
 
 
@@ -12,15 +12,18 @@ env.hosts = ['3.85.1.33', '100.26.171.116']
 
 
 def do_pack():
-    """Generate an tgz archive from web_static folder"""
+    """Script that generates a .tgz from the contents of the web_static"""
+    dir_name = "web_static_" + datetime.strftime(datetime.now(),
+                                                 "%Y%m%d%H%M%S")
+    archive_path = 'versions/{:s}.tgz'.format(dir_name)
+
     try:
-        local("mkdir -p versions")
-        local("tar -cvzf versions/web_static_{}.tgz web_static/".
-              format(time.strftime("%Y%m%d%H%M%S")))
-        return ("versions/web_static_{}.tgz".format(time.
-                                                    strftime("%Y%m%d%H%M%S")))
-    except SpecificException as e:
+        local('mkdir -p versions')
+        local('tar -czvf {:s} web_static'.format(archive_path))
+    except Exception:
         return None
+
+    return archive_path
 
 
 def do_deploy(archive_path):
@@ -41,7 +44,7 @@ def do_deploy(archive_path):
         run('sudo mv {}/web_static/* {}/'.format(dest, dest))
         run('sudo rm -rf {}/web_static'.format(dest))
         run('sudo rm -rf /data/web_static/current')
-        run('sudo ln -s {} /data/web_static/current'.format(dest))
+        run('sudo ln -sf {} /data/web_static/current'.format(dest))
         return True
     except SpecificException as e:
         return False
