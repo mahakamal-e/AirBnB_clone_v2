@@ -1,26 +1,25 @@
 #!/usr/bin/python3
 """A Fabric script distributes an archive to your web servers."""
-from fabric.api import *
 from fabric.contrib import files
-import os
+from fabric.api import env, put, run, local
 from os.path import exists
-from datetime import datetime
+import time
+import os
+
 
 env.user = 'ubuntu'
 env.hosts = ['3.85.1.33', '100.26.171.116']
 
 
 def do_pack():
-    """This function is responsible for generating the .tgz archive."""
-    get_current_date = datetime.now().strftime("%Y%m%d%H%M%S")
-    archive_file = 'versions'
+    """Generate an tgz archive from web_static folder"""
     try:
-        local("mkdir -p {}".format(archive_file))
-        archive_name = "{}/web_static_{}.tgz".format(archive_file,
-                                                     get_current_date)
-        local("tar -czvf {} web_static".format(archive_name))
-        return archive_name
-    except Exception as e:
+        local("mkdir -p versions")
+        local("tar -cvzf versions/web_static_{}.tgz web_static/".
+              format(time.strftime("%Y%m%d%H%M%S")))
+        return ("versions/web_static_{}.tgz".format(time.
+                                                    strftime("%Y%m%d%H%M%S")))
+    except SpecificException as e:
         return None
 
 
@@ -49,9 +48,10 @@ def do_deploy(archive_path):
 
 
 def deploy():
-    """ creates & distributes archive to web servers."""
-    archive_path = do_pack()
-    if not archive_path:
+    """ creates and distributes an archive to your web servers
+    """
+    new_archive_path = do_pack()
+    if exists(new_archive_path) is False:
         return False
-
-    return do_deploy(archive_path)
+        result = do_deploy(new_archive_path)
+        return result
