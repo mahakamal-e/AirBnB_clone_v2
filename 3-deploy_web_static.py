@@ -51,10 +51,29 @@ def do_deploy(archive_path):
 
 
 def deploy():
-    """ creates and distributes an archive to your web servers
-    """
-    new_archive_path = do_pack()
-    if exists(new_archive_path) is False:
+    """Creates and distributes an archive to web servers."""
+    # Step 1: Create a new archive
+    archive_path = do_pack()
+    if archive_path is None:
+        print("Error: Failed to create a new version.")
         return False
-        result = do_deploy(new_archive_path)
-        return result
+    else:
+        print("New version created:", archive_path)
+    
+    # Step 2: Deploy the new version
+    if not do_deploy(archive_path):
+        print("Error: Failed to deploy the new version.")
+        return False
+    
+    # Step 3: Check if the symbolic link points to the correct version
+    current_link = run("readlink -f /data/web_static/current")
+    expected_link = "/data/web_static/releases/{}".format(os.path.basename(archive_path).split('.')[0])
+    
+    if current_link != expected_link:
+        print("Error: Symbolic link does not point to the latest version.")
+        print("Current link:", current_link)
+        print("Expected link:", expected_link)
+        return False
+    
+    print("Deployment successful.")
+    return True
