@@ -16,7 +16,6 @@ def do_clean(number=0):
     else:
         number = int(number) + 1
 
-
     local('cd versions; ls -t | tail -n +{} | xargs rm -rf'
           .format(number))
     run('cd {}; ls -t | tail -n +{} | sudo xargs rm -rf'
