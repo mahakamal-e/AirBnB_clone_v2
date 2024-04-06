@@ -23,31 +23,29 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    """ a Faunction that deplys an archive to web servers."""
+    """Function that used to deploy to web servers"""
     if not os.path.exists(archive_path):
         return False
 
+    base_path = '/data/web_static/releases/'
+    tmp = archive_path.split('.')[0]
+    file_name = tmp.split('/')[1]
+    deployment_dir = base_path + file_name
+
     try:
-        filename = archive_path.split("/")[-1]
-        f_without_ext = filename.split(".")[0]
-        put(archive_path, "/tmp/")
-        run("mkdir -p /data/web_static/releases/{}/".format(f_without_ext))
-        run("tar -xzf /tmp/{} -C /data/web_static/releases/{}/"
-            .format(filename, f_without_ext))
-        run("rm /tmp/{}".format(filename))
-        run("mv /data/web_static/releases/{}/web_static/*\
-            /data/web_static/releases/{}/".format(f_without_ext,
-                                                  f_without_ext))
-        run("rm -rf /data/web_static/releases/{}/web_static"
-            .format(no_extension))
-        run("rm -rf /data/web_static/current")
-        run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
-            .format(no_extension))
+        put(archive_path, '/tmp')
+        run('sudo mkdir -p {}'.format(deployment_dir))
+        run('sudo tar -xzf /tmp/{}.tgz -C {}'.format(file_name,
+                                                     deployment_dir))
+        run('sudo rm -f /tmp/{}.tgz'.format(file_name))
+        run('sudo mv {}/web_static/* {}/'.format(deployment_dir,
+                                                 deployment_dir))
+        run('sudo rm -rf {}/web_static'.format(deployment_dir))
+        run('sudo rm -rf /data/web_static/current')
+        run('sudo ln -s {} /data/web_static/current'.format(deployment_dir))
         return True
-
-    except Exception as e:
+    except:
         return False
-
 
 def deploy():
     """ creates & distributes archive to web servers."""
