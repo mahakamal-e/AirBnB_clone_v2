@@ -64,3 +64,7 @@ class FileStorage:
             if generate_key in FileStorage.__objects:
                 del FileStorage.__objects[generate_key]
             self.save()
+
+    def close(self):
+        """ close method close file storage"""
+        self.reload()
