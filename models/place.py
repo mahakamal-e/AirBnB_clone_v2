@@ -20,6 +20,7 @@ place_amenity = Table(
 class Place(BaseModel, Base):
     """ A place ito stay """
     __tablename__ = 'places'
+    __table_args__ = ({'mysql_default_charset': 'latin1'})
     city_id = Column('city_id', String(60), ForeignKey('cities.id'),
                      nullable=False)
     user_id = Column('user_id', String(60), ForeignKey('users.id'),
