@@ -19,28 +19,35 @@ place_amenity = Table(
 
 class Place(BaseModel, Base):
     """ A place ito stay """
-    __tablename__ = 'places'
-    city_id = Column('city_id', String(60), ForeignKey('cities.id'),
-                     nullable=False)
-    user_id = Column('user_id', String(60), ForeignKey('users.id'),
-                     nullable=False)
-    name = Column('name', String(128), nullable=False)
-    description = Column('description', String(1024))
-    number_rooms = Column('number_rooms', Integer, default=0, nullable=False)
-    number_bathrooms = Column('number_bathrooms', Integer, default=0,
-                              nullable=False)
-    max_guest = Column('max_guest', Integer, default=0, nullable=False)
-    price_by_night = Column('price_by_night', Integer, default=0,
-                            nullable=False)
-    latitude = Column('latitude', Float)
-    longitude = Column('longitude', Float)
-
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+        __tablename__ = 'places'
+        city_id = Column(String(60), nullable=False)
+        user_id = Column(String(60), nullable=False)
+        name = Column(String(128), nullable=False)
+        description = Column(String(1024), nullable=True)
+        number_rooms = Column(Integer, nullable=False, default=0)
+        number_bathrooms = Column(Integer, nullable=False, default=0)
+        max_guest = Column(Integer, nullable=False, default=0)
+        price_by_night = Column(Integer, nullable=False, default=0)
+        latitude = Column(Float, nullable=True)
+        longitude = Column(Float, nullable=True)
         reviews = relationship('Review', cascade='all, delete')
         amenities = relationship("Amenity", secondary=place_amenity,
                                  viewonly=False,
                                  back_populates="place_amenities")
     else:
+        city_id = ""
+        user_id = ""
+        name = ""
+        description = ""
+        number_rooms = 0
+        number_bathrooms = 0
+        max_guest = 0
+        price_by_night = 0
+        latitude = 0.0
+        longitude = 0.0
+        amenity_ids = []
+
         @property
         def reviews(self):
             """ Get list of reviews related to place """
