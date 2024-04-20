@@ -1,13 +1,14 @@
 #!/usr/bin/python3
-"""Start a Flask web application"""
+"""script that starts a Flask web application"""
 from flask import Flask, render_template
+
 from models import storage
 
-
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 
-@app.route('/states', strict_slashes=False)
+@app.route('/states')
 def states():
     """Get all state data"""
     states = storage.all("State")
@@ -15,7 +16,7 @@ def states():
                            states=states)
 
 
-@app.route('/states/<state_id>', strict_slashes=False)
+@app.route('/states/<id>')
 def cities_by_states(id):
     """Get all state data"""
     states = storage.all("State")
