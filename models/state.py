@@ -22,5 +22,4 @@ class State(BaseModel, Base):
                     cities_list.append(city)
             return cities_list
     else:
-        state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
         cities = relationship('City', backref='state', cascade='all, delete')
