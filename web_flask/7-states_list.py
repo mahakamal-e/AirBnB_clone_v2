@@ -17,8 +17,8 @@ def states_list():
 @app.teardown_appcontext
 def teardown(exc):
     """Close the current SQLAlchemy session."""
-     storage.close()
+    storage.close()
 
 
 if __name__ == '__main__':
-     app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
