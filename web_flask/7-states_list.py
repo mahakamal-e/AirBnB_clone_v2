@@ -1,26 +1,24 @@
 #!/usr/bin/python3
-"""script that starts a Flask web application"""
+""" Start a Flask web application."""
 from flask import Flask, render_template
-
 from models import storage
 
+
 app = Flask(__name__)
-app.url_map.strict_slashes = False
 
 
-@app.route('/states_list')
-def states():
-    """Get all state data"""
+@app.route('/states_list', strict_slashes=False)
+def states_list():
+    """Displays an HTML page with a list of all States."""
     states = storage.all("State")
-    return render_template("7-states_list.html",
-                           states=states)
+    return render_template("7-states_list.html", states=states)
 
 
 @app.teardown_appcontext
-def terminate(exc):
-    """Close SQLAlchemy session"""
-    storage.close()
+def teardown(exc):
+    """Close the current SQLAlchemy session."""
+     storage.close()
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+     app.run(host='0.0.0.0', port=5000)
