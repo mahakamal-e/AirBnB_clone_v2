@@ -20,10 +20,9 @@ def states():
 def cities_by_states(id):
     """Displays HTML containes state data related to City"""
     states = storage.all("State")
-    state_id = "State." + id
-    if state_id in states.keys():
-        return render_template("9-states.html",
-                               state=states[state_id],
+    _id = "State." + id
+    if _id in states.keys():
+        return render_template("9-states.html", state=states[_id],
                                id=id)
 
     return render_template("9-states.html", not_found="not found")
